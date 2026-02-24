@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Interval Timer
+
+A modern, responsive interval timer application built with Next.js, React, and Tailwind CSS. Designed for HIIT workouts, CrossFit, or any activity requiring precise timed intervals.
+
+## Features
+
+- **Customizable Timers**: Create and save multiple timers with specific configurations:
+  - **Warmup**: Set a preparation time before the workout starts.
+  - **Exercise Time**: Duration of the active interval.
+  - **Rest Time**: Duration of the recovery interval.
+  - **Reps**: Number of exercise/rest cycles per loop.
+  - **Loops**: Number of times to repeat the entire set.
+- **Interactive Player**: Real-time countdown display with phase indicators (Warmup, Exercise, Rest).
+- **Audio Notifications**: High-pitched beeps to signal phase transitions and the end of the workout.
+- **LocalStorage Persistence**: Your timers are automatically saved in your browser, so they're ready whenever you return.
+- **Responsive Design**: Optimized for both mobile and desktop use using Tailwind CSS 4.
+- **Unit Tested**: Core components and logic are verified with Jest and React Testing Library.
+
+## Tech Stack
+
+- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
+- **Library**: [React 19](https://react.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Testing**: [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+- **Containerization**: [Docker](https://www.docker.com/)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20 or later
+- npm (or yarn/pnpm/bun)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/rudyscoggins/intervaltimer.git
+   cd intervaltimer
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+### Development
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Running Tests
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Execute the test suite:
 
-## Learn More
+```bash
+npm test
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Docker Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application is containerized for easy deployment.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Using Docker Compose
 
-## Deploy on Vercel
+1. Build and start the container:
+   ```bash
+   docker-compose up -d
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Access the application at [http://localhost:3030](http://localhost:3030).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Using Docker Directly
+
+1. Build the image:
+   ```bash
+   docker build -t intervaltimer .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 3030:3030 intervaltimer
+   ```
+
+## License
+
+MIT
