@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { IntervalTimer, TimerStatus, TimerPhase } from '@/types';
-import { playBeep } from '@/utils/audio';
+import { playBeep, playTick } from '@/utils/audio';
 
 interface TimerPlayerProps {
   timer: IntervalTimer;
@@ -61,6 +61,9 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
     let interval: NodeJS.Timeout;
 
     if (status === 'running' && timeLeft > 0) {
+      if (timeLeft <= 5) {
+        playTick();
+      }
       interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
