@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { IntervalTimer, TimerStatus, TimerPhase } from '@/types';
-import { playBeep, playTick } from '@/utils/audio';
+import { playBeep, playTick, playDing } from '@/utils/audio';
 
 interface TimerPlayerProps {
   timer: IntervalTimer;
@@ -61,6 +61,13 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
     let interval: NodeJS.Timeout;
 
     if (status === 'running' && timeLeft > 0) {
+      const totalPhaseTime = phase === 'warmup' ? timer.warmup : (phase === 'exercise' ? timer.exerciseTime : timer.restTime);
+      const halfwayPoint = Math.floor(totalPhaseTime / 2);
+
+      if (phase === 'exercise' && timeLeft === halfwayPoint && totalPhaseTime > 1) {
+        playDing();
+      }
+
       if (timeLeft <= 5) {
         playTick();
       }
