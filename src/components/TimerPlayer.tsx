@@ -17,41 +17,48 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
   const [timeLeft, setTimeLeft] = useState(timer.warmup > 0 ? timer.warmup : timer.exerciseTime);
 
   const handleNextPhase = useCallback(() => {
-    playBeep();
     if (phase === 'warmup') {
+      playDing();
       setPhase('exercise');
       setTimeLeft(timer.exerciseTime);
     } else if (phase === 'exercise') {
       if (timer.restTime > 0) {
+        playBeep();
         setPhase('rest');
         setTimeLeft(timer.restTime);
       } else {
         // Skip rest if restTime is 0
         if (currentRep < timer.reps) {
+          playDing();
           setCurrentRep((r) => r + 1);
           setPhase('exercise');
           setTimeLeft(timer.exerciseTime);
         } else if (currentLoop < timer.loops) {
+          playDing();
           setCurrentLoop((l) => l + 1);
           setCurrentRep(1);
           setPhase('exercise');
           setTimeLeft(timer.exerciseTime);
         } else {
+          playBeep();
           setStatus('finished');
         }
       }
     } else {
       // End of rest
       if (currentRep < timer.reps) {
+        playDing();
         setCurrentRep((r) => r + 1);
         setPhase('exercise');
         setTimeLeft(timer.exerciseTime);
       } else if (currentLoop < timer.loops) {
+        playDing();
         setCurrentLoop((l) => l + 1);
         setCurrentRep(1);
         setPhase('exercise');
         setTimeLeft(timer.exerciseTime);
       } else {
+        playBeep();
         setStatus('finished');
       }
     }
@@ -68,7 +75,7 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
         playDing();
       }
 
-      if (timeLeft <= 5) {
+      if (timeLeft <= 5 && timeLeft < totalPhaseTime) {
         playTick();
       }
       interval = setInterval(() => {
@@ -79,7 +86,7 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
     }
 
     return () => clearInterval(interval);
-  }, [status, timeLeft, handleNextPhase]);
+  }, [status, timeLeft, handleNextPhase, phase, timer]);
 
   const togglePause = () => {
     setStatus((prev) => (prev === 'running' ? 'paused' : 'running'));
