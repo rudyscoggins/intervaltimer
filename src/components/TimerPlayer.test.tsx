@@ -75,11 +75,16 @@ describe('TimerPlayer', () => {
     expect(audioUtils.playDing).toHaveBeenCalledTimes(2);
   });
 
-  it('completes the workout after all reps', () => {
+  it('completes the workout after all reps (skipping final rest)', () => {
     render(<TimerPlayer timer={mockTimer} onClose={() => {}} />);
     
-    // Total time: 5s warmup + (5s exercise + 3s rest) * 2 reps = 21s
-    for (let i = 0; i < 21; i++) {
+    // Total time with skipped final rest: 
+    // 5s warmup 
+    // + 5s exercise (rep 1)
+    // + 3s rest (rep 1)
+    // + 5s exercise (rep 2)
+    // = 18s
+    for (let i = 0; i < 18; i++) {
       act(() => {
         jest.advanceTimersByTime(1000);
       });

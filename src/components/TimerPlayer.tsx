@@ -22,12 +22,18 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
       setPhase('exercise');
       setTimeLeft(timer.exerciseTime);
     } else if (phase === 'exercise') {
-      if (timer.restTime > 0) {
+      const isLastRep = currentRep === timer.reps;
+      const isLastLoop = currentLoop === timer.loops;
+
+      if (isLastRep && isLastLoop) {
+        playBeep();
+        setStatus('finished');
+      } else if (timer.restTime > 0) {
         playBeep();
         setPhase('rest');
         setTimeLeft(timer.restTime);
       } else {
-        // Skip rest if restTime is 0
+        // Skip rest if restTime is 0 and it's not the final rep/loop
         if (currentRep < timer.reps) {
           playDing();
           setCurrentRep((r) => r + 1);
@@ -39,9 +45,6 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
           setCurrentRep(1);
           setPhase('exercise');
           setTimeLeft(timer.exerciseTime);
-        } else {
-          playBeep();
-          setStatus('finished');
         }
       }
     } else {
