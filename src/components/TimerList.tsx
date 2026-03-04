@@ -1,6 +1,7 @@
 'use client';
 
 import { IntervalTimer } from '@/types';
+import { calculateTotalTime, formatDuration } from '@/utils/timer';
 
 interface TimerListProps {
   timers: IntervalTimer[];
@@ -40,8 +41,13 @@ export default function TimerList({ timers, onStart, onEdit, onDelete, onAdd }: 
               key={timer.id}
               className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:y-0"
             >
-              <div className="text-center sm:text-left">
-                <h3 className="text-lg font-semibold text-gray-900">{timer.name}</h3>
+              <div className="text-center sm:text-left flex-1">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-lg font-semibold text-gray-900">{timer.name}</h3>
+                  <span className="text-sm font-medium bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">
+                    {formatDuration(calculateTotalTime(timer))}
+                  </span>
+                </div>
                 <p className="text-sm text-gray-600">
                   {timer.warmup > 0 && `Warmup: ${timer.warmup}s | `}
                   {timer.reps} reps × {timer.exerciseTime}s exercise, {timer.restTime}s rest | {timer.loops} loops

@@ -7,6 +7,8 @@ jest.mock('@/utils/audio', () => ({
   playBeep: jest.fn(),
   playTick: jest.fn(),
   playDing: jest.fn(),
+  playHalfway: jest.fn(),
+  playNextExercise: jest.fn(),
 }));
 
 jest.useFakeTimers();
@@ -27,7 +29,7 @@ describe('TimerPlayer', () => {
   });
 
   it('starts with warmup phase and correct time', () => {
-    render(<TimerPlayer timer={mockTimer} onClose={() => {}} />);
+    render(<TimerPlayer timer={mockTimer} broMode={false} onClose={() => {}} />);
     expect(screen.getByText(/warmup/i)).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
     // It should NOT tick at 5 because it just started
@@ -35,7 +37,7 @@ describe('TimerPlayer', () => {
   });
 
   it('switches to exercise phase after warmup and plays ding', () => {
-    render(<TimerPlayer timer={mockTimer} onClose={() => {}} />);
+    render(<TimerPlayer timer={mockTimer} broMode={false} onClose={() => {}} />);
     
     // Warmup is 5s. 
     // Ticks at 4, 3, 2, 1.
@@ -48,11 +50,11 @@ describe('TimerPlayer', () => {
     expect(screen.getByText(/exercise/i)).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(audioUtils.playTick).toHaveBeenCalledTimes(4);
-    expect(audioUtils.playDing).toHaveBeenCalledTimes(1); // One ding for starting exercise
+    expect(audioUtils.playNextExercise).toHaveBeenCalledTimes(1); // One ding for starting exercise
   });
 
   it('plays ding at halfway point of exercise', () => {
-    render(<TimerPlayer timer={mockTimer} onClose={() => {}} />);
+    render(<TimerPlayer timer={mockTimer} broMode={false} onClose={() => {}} />);
     
     // Fast forward through warmup (5s)
     for (let i = 0; i < 5; i++) {
@@ -61,8 +63,8 @@ describe('TimerPlayer', () => {
       });
     }
 
-    // Now in exercise (5s). playDing count should be 1 (transition).
-    expect(audioUtils.playDing).toHaveBeenCalledTimes(1);
+    // Now in exercise (5s). playNextExercise count should be 1 (transition).
+    expect(audioUtils.playNextExercise).toHaveBeenCalledTimes(1);
 
     // Now advance to halfway point (timeLeft = 2)
     // floor(5/2) = 2.
@@ -72,11 +74,11 @@ describe('TimerPlayer', () => {
       jest.advanceTimersByTime(1000); // timeLeft 2
     });
 
-    expect(audioUtils.playDing).toHaveBeenCalledTimes(2);
+    expect(audioUtils.playHalfway).toHaveBeenCalledTimes(1);
   });
 
   it('completes the workout after all reps (skipping final rest)', () => {
-    render(<TimerPlayer timer={mockTimer} onClose={() => {}} />);
+    render(<TimerPlayer timer={mockTimer} broMode={false} onClose={() => {}} />);
     
     // Total time with skipped final rest: 
     // 5s warmup 

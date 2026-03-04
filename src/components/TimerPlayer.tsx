@@ -2,14 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { IntervalTimer, TimerStatus, TimerPhase } from '@/types';
-import { playBeep, playTick, playDing } from '@/utils/audio';
+import { playBeep, playTick, playDing, playHalfway, playNextExercise } from '@/utils/audio';
 
 interface TimerPlayerProps {
   timer: IntervalTimer;
+  broMode: boolean;
   onClose: () => void;
 }
 
-export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
+export default function TimerPlayer({ timer, broMode, onClose }: TimerPlayerProps) {
   const [status, setStatus] = useState<TimerStatus>('running');
   const [phase, setPhase] = useState<TimerPhase>(timer.warmup > 0 ? 'warmup' : 'exercise');
   const [currentLoop, setCurrentLoop] = useState(1);
@@ -18,7 +19,7 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
 
   const handleNextPhase = useCallback(() => {
     if (phase === 'warmup') {
-      playDing();
+      playNextExercise(broMode);
       setPhase('exercise');
       setTimeLeft(timer.exerciseTime);
     } else if (phase === 'exercise') {
@@ -35,12 +36,12 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
       } else {
         // Skip rest if restTime is 0 and it's not the final rep/loop
         if (currentRep < timer.reps) {
-          playDing();
+          playNextExercise(broMode);
           setCurrentRep((r) => r + 1);
           setPhase('exercise');
           setTimeLeft(timer.exerciseTime);
         } else if (currentLoop < timer.loops) {
-          playDing();
+          playNextExercise(broMode);
           setCurrentLoop((l) => l + 1);
           setCurrentRep(1);
           setPhase('exercise');
@@ -50,12 +51,12 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
     } else {
       // End of rest
       if (currentRep < timer.reps) {
-        playDing();
+        playNextExercise(broMode);
         setCurrentRep((r) => r + 1);
         setPhase('exercise');
         setTimeLeft(timer.exerciseTime);
       } else if (currentLoop < timer.loops) {
-        playDing();
+        playNextExercise(broMode);
         setCurrentLoop((l) => l + 1);
         setCurrentRep(1);
         setPhase('exercise');
@@ -65,7 +66,7 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
         setStatus('finished');
       }
     }
-  }, [phase, currentRep, currentLoop, timer]);
+  }, [phase, currentRep, currentLoop, timer, broMode]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -75,7 +76,7 @@ export default function TimerPlayer({ timer, onClose }: TimerPlayerProps) {
       const halfwayPoint = Math.floor(totalPhaseTime / 2);
 
       if (phase === 'exercise' && timeLeft === halfwayPoint && totalPhaseTime > 1) {
-        playDing();
+        playHalfway(broMode);
       }
 
       if (timeLeft <= 5 && timeLeft < totalPhaseTime) {

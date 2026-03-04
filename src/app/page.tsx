@@ -11,6 +11,7 @@ export default function Home() {
   const [activeTimer, setActiveTimer] = useState<IntervalTimer | null>(null);
   const [editingTimer, setEditingTimer] = useState<IntervalTimer | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [broMode, setBroMode] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -23,7 +24,16 @@ export default function Home() {
         console.error('Failed to parse saved timers', e);
       }
     }
+    const savedBroMode = localStorage.getItem('bro-mode');
+    if (savedBroMode) {
+      setBroMode(savedBroMode === 'true');
+    }
   }, []);
+
+  const toggleBroMode = (enabled: boolean) => {
+    setBroMode(enabled);
+    localStorage.setItem('bro-mode', enabled.toString());
+  };
 
   const saveTimers = (newTimers: IntervalTimer[]) => {
     console.log('Attempting to save timers to localStorage:', newTimers);
@@ -60,13 +70,26 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 text-black">
       <div className="max-w-4xl mx-auto p-4 sm:p-8">
         {!activeTimer && (
-          <TimerList
-            timers={timers}
-            onStart={setActiveTimer}
-            onEdit={setEditingTimer}
-            onDelete={handleDeleteTimer}
-            onAdd={() => setIsAdding(true)}
-          />
+          <>
+            <div className="mb-6 flex items-center justify-end">
+              <label className="flex items-center cursor-pointer space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition">
+                <input
+                  type="checkbox"
+                  checked={broMode}
+                  onChange={(e) => toggleBroMode(e.target.checked)}
+                  className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
+                <span className="text-lg font-bold text-gray-800">💪 Bro Mode</span>
+              </label>
+            </div>
+            <TimerList
+              timers={timers}
+              onStart={setActiveTimer}
+              onEdit={setEditingTimer}
+              onDelete={handleDeleteTimer}
+              onAdd={() => setIsAdding(true)}
+            />
+          </>
         )}
 
         {(isAdding || editingTimer) && (
@@ -87,6 +110,7 @@ export default function Home() {
         {activeTimer && (
           <TimerPlayer
             timer={activeTimer}
+            broMode={broMode}
             onClose={() => setActiveTimer(null)}
           />
         )}

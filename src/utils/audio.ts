@@ -54,3 +54,23 @@ export const playDing = () => {
   oscillator.start(audioContext.currentTime);
   oscillator.stop(audioContext.currentTime + 0.8);
 };
+
+export const playHalfway = (broMode: boolean) => {
+  if (broMode) {
+    const isBro = Math.random() < 0.3;
+    const audio = new Audio(isBro ? '/audio/halfwaybro.wav' : '/audio/halfway.wav');
+    audio.play().catch(e => console.error("Error playing audio:", e));
+  } else {
+    playDing();
+  }
+};
+
+export const playNextExercise = (broMode: boolean) => {
+  if (broMode) {
+    const isBro = Math.random() < 0.3;
+    const audio = new Audio(isBro ? '/audio/NextExerciseBro.wav' : '/audio/NextExercise.wav');
+    audio.play().catch(e => console.error("Error playing audio:", e));
+  } else {
+    playDing();
+  }
+};
